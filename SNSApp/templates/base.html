@@ -5,6 +5,11 @@
     <meta charset="UTF-8">                                                  <!--文字エンコードをUTF-8に指定-->
     <title>{% block title %}マナ部{% endblock %}</title>
     <meta name="viewport" content="width=device-width,initial-scale=1.0">   <!--画面サイズをデバイスサイズに合わせて最適化-->
+
+    <link rel="preconnect" href="https://fonts.googleapis.com"> <!-- 260908フォント指定追加  -->
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin> <!-- 260908フォント指定追加  -->
+    <link href="https://fonts.googleapis.com/css2?family=Kiwi+Maru&display=swap" rel="stylesheet"> <!-- 260908フォント指定追加  -->
+
     <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css')}}">       
     <link rel="stylesheet" href="{{ url_for('static', filename='css/header.css')}}">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.css">
