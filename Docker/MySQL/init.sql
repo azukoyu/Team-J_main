@@ -1,18 +1,4 @@
-DROP DATABASE IF EXISTS snsapp;
-
-DROP USER IF EXISTS 'testuser'@'%';
-
-
-CREATE USER 'testuser'@'%' IDENTIFIED BY 'testuser';
-
-CREATE DATABASE IF NOT EXISTS snsapp
-  DEFAULT CHARACTER SET utf8mb4
-  DEFAULT COLLATE utf8mb4_unicode_ci;
-
-
-GRANT ALL PRIVILEGES ON snsapp.* TO 'testuser'@'%';
-
-FLUSH PRIVILEGES;
+-- DB名・ユーザー・パスワードは、　.env --> docker-compose.yml --> MySQL　に任せる
 
 USE snsapp;
 
@@ -120,27 +106,6 @@ CREATE TABLE baton_queues (
     KEY idx_baton_queues_created_at   (created_at)
 )ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_unicode_ci;
 
-/* バトンID(旧式)
-CREATE TABLE
-    Baton (
-        id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
-        user_id BIGINT UNSIGNED NOT NULL,
-        task_id BIGINT UNSIGNED NOT NULL,
-        content TEXT NOT NULL,
-        taskclear_F DATETIME (6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
-        taskfailed_F DATETIME (6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
-        batonget_at DATETIME (6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
-        get_at DATETIME (6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
-        release_at DATETIME (6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6),
-        batonpop BIT(1),
-        PRIMARY KEY (id),
-        KEY idx_baton_user_id (user_id),
-        KEY idx_baton_task_id (task_id),
-        CONSTRAINT fk_baton_user FOREIGN KEY (user_id) REFERENCES users (id),
-        CONSTRAINT fk_baton_task FOREIGN KEY (task_id) REFERENCES tasks (id)
-    ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_unicode_ci;
-
-*/
 -- バトン履歴ID
 CREATE TABLE
     Batonlogs (
@@ -153,34 +118,6 @@ CREATE TABLE
         KEY idx_batonlogs_user_id (baton_id),
         CONSTRAINT fk_batonlogs_user FOREIGN KEY (baton_id) REFERENCES Baton (id)
     ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_unicode_ci;
-
-/* 勉強ID
-CREATE TABLE
-    studys (
-        id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
-        post_id BIGINT UNSIGNED NOT NULL,
-        content TEXT NOT NULL,
-        study_time TIME NOT NULL,
-        study_day DATE NOT NULL,
-        all_study TIME NOT NULL,
-        created_at DATETIME (6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
-        PRIMARY KEY (id),
-        KEY idx_study_post_id (post_id),
-        CONSTRAINT fk_study_post FOREIGN KEY (post_id) REFERENCES posts (id)
-    ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_unicode_ci;
-
-*/
-
-/*リアクションユーザーID(いらないかも)
-CREATE TABLE
-    Re_users (
-        id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
-        content TEXT NOT NULL,
-        created_at DATETIME (6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
-        updated_at DATETIME (6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6),
-        PRIMARY KEY (id)
-    ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_unicode_ci;
-*/
 
 -- リアクションID
 CREATE TABLE
@@ -212,55 +149,12 @@ CREATE TABLE
         -- ON DELETE CASCADE 連動削除機能。投稿が消えると紐づいているリアクションも一緒に消える
     ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_unicode_ci;    
 
-
-INSERT INTO users (name, email, password)
-VALUES 
-  -- ('Tomo', 'Tomo64@example.com', '0c120c7ab57b43d4db1837f2a4332ced20b2f3160bdeb186a8d601e3b0d6ace5'),
-  ('Tomo', '1234', '0ffe1abd1a08215353c233d6e009613e95eec4253832a761af28ff37ac5a150c'),
-  ('おっくん', 'okun@example.com', '165d68fe9913a11c91bb7290d5d885833240c0fdb43b0b2be790f043bc9022c7'),
-  ('てる', 'teru@example.com', '44b4c21936c779156df19a17832a0d91ecbfb37e6889ef6d9b465c75b00ef060');
---   ('たまちゃん', 'tamachan@example.com', 'ee839106f2f14fab267dd94f311a152490e256e69e612e4d73b710c5fc9b7ef7'),
---   ('まつけん', 'matuken@example.com', '2935bf31052e67f5ff0ba4f37e9f6ef3964831dfeee316fee07cef4ab9803a62');
---   ('田中太郎', 'tanaka@test.com', '5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8'),
---   ('佐藤花子', 'sato@test.com', '5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8'),
---   ('鈴木一郎', 'suzuki@test.com', '5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8'),
---   ('山田二郎', 'yamada@test.com', '5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8'),
---   ('伊藤三郎', 'ito@test.com', '5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8');
-
-
-INSERT INTO posts (user_id, content,study_time)
-VALUES
-  (1, 'こんにちは！数学勉強中です！','01:30:00'),
-  (2, '試験頑張ってきます','05:30:00'),
-  (3, 'ハッカソンの会議の日です！', '00:45:00');
---   (6, '今日は数学の微分を勉強しました！', '01:30:00'),
---   (7, '英単語を50個覚えました！', '00:45:00'),
---   (8, '物理の力学をやりました', '02:00:00'),
---   (9, '化学の有機化合物を復習しました', '01:00:00'),
---   (10, '古文の文法を勉強しました', '00:30:00'),
---   (6, '二次関数の問題を解きました', '01:15:00'),
---   (7, '英語のリスニングをしました', '00:50:00');  
-
-
-INSERT INTO comments (user_id, post_id, content)
-VALUES
-    (2, 1, '私もがんばります！'),
-    (3, 2, '応援しています！頑張ってください。'),
-    (1, 3, '22時からですね！');
-    -- (7, 4, '微分頑張ってますね！'),
-    -- (8, 4, '一緒に頑張りましょう！'),
-    -- (6, 5, '50個すごい！'),
-    -- (9, 5, '英単語大事ですよね'),
-    -- (10, 6, '物理難しいですよね'),
-    -- (6, 7, '有機化合物は重要ですね'),
-    -- (7, 8, '古文がんばれ！');    
-
 INSERT INTO tasks(content)
 VALUES
 ('今日授業で習ったこと、1つ教えて！') ,
-('最近のマナビで「へーー」って思ったこと教えてー ') ,
-('得意な教科の問題、何でもいいから3問解いてみて！ ') ,
-('苦手な教科の教科書を1ページだけ音読しろ ') ,
+('最近のマナビで「へーー」って思ったこと教えてー') ,
+('得意な教科の問題、何でもいいから3問解いてみて！') ,
+('苦手な教科の教科書を1ページだけ音読しろ') ,
 ('「これ知らんやろ」って思ってること教えて') ,
 ('昨日より1ミリだけ賢くなったこと教えて') ,
 ('ノートのどっか1行だけ写してみて') ,
@@ -282,19 +176,4 @@ VALUES
 ('1分だけタイマーなしで集中してみて感想書け') ,
 ('今の気分で一番マシな教科に1秒触れろ（開くだけOK）') ;
 
-
- INSERT INTO chain(id) VALUES(1);
--- INSERT INTO chain(id) VALUES(2);
--- INSERT INTO chain(id) VALUES(3);
-
--- INSERT INTO Baton (baton_title,sender_id, receiver_id, task_id,content,chain_id,relay_count,status,created_at)
--- VALUES
--- --  ('レジェンドバトン！', 2, 1, 1, '画面遷移、機能について教えて！', 1, 1, 0,NOW())
---   ('レジェンドバトン！', 2, 1, 1, '画面遷移、機能について教えて！', 1, 1, 0,NOW() - INTERVAL 00 HOUR - INTERVAL 00 MINUTE - INTERVAL 00 SECOND);
-
-INSERT INTO post_reactions (post_id, user_id, emoji_type) 
-VALUES
-(1, 2, X'F09F918D'),    -- [グーサイン] (16進数)
-(2, 3, X'E29DA4'),      -- [ハート] (16進数)
-(3, 1, X'F09F9882'),    -- [泣き笑い] (16進数)
-(1, 3, X'F09F98AD') ;   -- [号泣] (16進数)
+INSERT INTO chain(id) VALUES(1);
