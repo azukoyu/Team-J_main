@@ -102,8 +102,8 @@ class Baton:
                             , Baton.status
                             , Baton.created_at
                             , Baton.batonpop
-                            # , DATE_ADD(Baton.created_at ,  INTERVAL 1 DAY) AS time_limit
-                            , DATE_ADD(Baton.created_at ,  INTERVAL 30 second) AS time_limit
+                            , DATE_ADD(Baton.created_at ,  INTERVAL 1 DAY) AS time_limit
+
                            FROM Baton 
                              INNER JOIN  users sender
                                on Baton.sender_id = sender.id
@@ -164,8 +164,7 @@ class Baton:
                          FROM
                              Baton
                          WHERE 1 = 1
-                         # AND TIMESTAMPDIFF(HOUR , created_at , NOW()) >= 24  発表用に30秒に 
-                         AND TIMESTAMPDIFF(SECOND , created_at , NOW()) >= 30  
+                         AND TIMESTAMPDIFF(HOUR , created_at , NOW()) >= 24
                          AND status = 0;
                      """
                 cur.execute(sql)
