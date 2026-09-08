@@ -3,8 +3,8 @@ from Models.User import User
 from Models.Post import Post
 from Models.Comment import Comment
 from util.SessionManager import SessionManager as SM
-import hashlib
 import re
+from werkzeug.security import generate_password_hash, check_password_hash
 import os
 
 auth = Blueprint('auth', __name__)
@@ -49,12 +49,9 @@ def login_process():
     if user is None:
         flash('メールアドレスorパスワードが違います','error')
         return redirect(url_for('auth.login_view'))
-        
-    # -- ユーザーが存在していた場合 --
-    hashPassword = hashlib.sha256(password.encode('utf-8')).hexdigest()
     
     # パスワードが一致しない場合
-    if hashPassword != user["password"]:
+    if not check_password_hash(user["password"], password):
         flash('メールアドレスorパスワードが違います','error')
         return redirect(url_for('auth.login_view'))
     
@@ -98,8 +95,8 @@ def signup_process():
         flash('既に登録されているメールアドレスです','error')
         return redirect(url_for('auth.signup_view'))
 
-    # 入力されたパスワードをハッシュ化
-    hashed_password = hashlib.sha256(password.encode('utf-8')).hexdigest()
+    # パスワード保存用の安全なハッシュを生成
+    hashed_password = generate_password_hash(password)
 
     # 新規登録
     user_id = User.create(name, email, hashed_password)
