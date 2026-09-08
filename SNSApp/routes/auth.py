@@ -5,10 +5,12 @@ from Models.Comment import Comment
 from util.SessionManager import SessionManager as SM
 import hashlib
 import re
+import os
 
 auth = Blueprint('auth', __name__)
 
 EMAIL_PATTERN = r"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$"
+INVITE_CODE = os.environ.get('INVITE_CODE')
 
 # 新規登録ページの表示
 @auth.route('/signup', methods=['GET'])
@@ -68,10 +70,16 @@ def signup_process():
     email = request.form.get('email', '').strip()
     password = request.form.get('password', '')
     password_confirmation = request.form.get('password_confirmation', '')
+    invite_code = request.form.get('invite_code', '').strip()
     
     # 空チェック
-    if not name or not email or not password or not password_confirmation:
+    if not name or not email or not password or not password_confirmation or not invite_code:
         flash("空のフォームがあります" , 'error')
+        return redirect(url_for('auth.signup_view'))
+
+    # 招待コードチェック
+    if invite_code != INVITE_CODE:
+        flash('招待コードが正しくありません', 'error')
         return redirect(url_for('auth.signup_view'))
 
     # パスワード一致チェック
