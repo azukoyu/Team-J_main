@@ -30,6 +30,11 @@ app = Flask(__name__)
 # アプリのシークレットキー
 app.secret_key = os.getenv('SECRET_KEY', uuid.uuid4().hex)
 
+# セッションCookieのセキュリティ設定
+app.config['SESSION_COOKIE_SECURE'] = os.getenv('SESSION_COOKIE_SECURE', 'False').lower() == 'true'
+app.config['SESSION_COOKIE_HTTPONLY'] = True
+app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
+
 # セッションの有効期限を設定
 app.permanent_session_lifetime = timedelta(days=SESSION_DAYS)
 
