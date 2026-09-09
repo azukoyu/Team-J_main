@@ -3,6 +3,9 @@ services:
   db:
     # コンテナ名をmysqlに設定
     container_name: MySQL
+    # EC2/Docker再起動時に自動起動
+    restart: unless-stopped
+
     # MySQLのDockerfileをビルドする
     build:
       # ビルドコンテキストはカレントディレクトリ
@@ -42,6 +45,8 @@ services:
   app:
     # コンテナ名をFlaskに設定
     container_name: Flask
+    # EC2/Docker再起動時に自動起動
+    restart: unless-stopped
     # FlaskのDockerfileをビルドする
     build:
       # ビルドコンテキストはカレントディレクトリ
