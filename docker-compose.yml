@@ -41,6 +41,12 @@ services:
       retries: 3
       # ヘルスチェックが失敗しても無視する時間は30秒
       start_period: 30s
+    # ログローテーション設定
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m" #1ファイル最大10MB
+        max-file: "3" #最大3世代まで保持
 
   app:
     # コンテナ名をFlaskに設定
@@ -69,6 +75,12 @@ services:
     # .envファイルから環境変数を読み込む
     env_file:
       - .env
+    # ログローテーション設定
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m" #1ファイル最大10MB
+        max-file: "3" #最大3世代まで保持
 
 volumes:
   mysql_data:
